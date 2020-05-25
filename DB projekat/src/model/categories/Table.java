@@ -1,5 +1,9 @@
 package model.categories;
 
+import java.util.Enumeration;
+
+import javax.swing.tree.TreeNode;
+
 import model.DBNode;
 import model.DBNodeComposite;
 
@@ -17,6 +21,12 @@ public class Table extends DBNodeComposite{
             Attribute attribute = (Attribute) child;
             this.getChildren().add(attribute);
         }
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.getName();
 	}
 
 }

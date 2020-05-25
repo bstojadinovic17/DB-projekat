@@ -11,26 +11,23 @@ import javax.swing.JTabbedPane;
 public class DesnoGore extends JPanel{
 	
 	private JFrame frame = MainView.getinstance();
-	
-	public DesnoGore() {
+	private static DesnoGore instance = null;
+	private DesnoGore() {
 		// TODO Auto-generated constructor stub
 		setSize(new Dimension(700, 350));
 		setVisible(true);
 		
-		JTabbedPane pane=new JTabbedPane();
-		pane.add("Tab 1", makePanel("This is tab 1"));
-		pane.addTab("Tab 2", makePanel("This is tab 2"));
-		pane.add("Tab 3", makePanel("This is tab 3"));
-		add(pane);
+		
 		}
 	
-	
-		private static JPanel makePanel(String text) {
-		JPanel p=new JPanel();
-		p.add(new JLabel(text));
-		p.setLayout(new GridLayout(1, 1));
 		
-		return p;
-	}
+		
+		
+		public static DesnoGore getInstance() {
+			if(instance == null) {
+				instance = new DesnoGore();
+			}
+			return instance;
+		}
 	}
 

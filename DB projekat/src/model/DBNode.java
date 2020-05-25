@@ -1,7 +1,8 @@
 package model;
 
+import javax.swing.tree.TreeNode;
 
-public abstract class DBNode {
+public abstract class DBNode implements TreeNode{
 
 	private String name;
 	private DBNode parent;
@@ -20,5 +21,9 @@ public abstract class DBNode {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return this.getName();
+	}
+	public TreeNode getparent() {
+		// TODO Auto-generated method stub
+		return parent;
 	}
 }

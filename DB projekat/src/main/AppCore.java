@@ -5,6 +5,7 @@ import db.DatabaseImpl;
 import db.SQLrepositoryImpl;
 import db.settings.Settings;
 import db.settings.SettingsImpl;
+import gui.table.TableModel;
 import model.categories.Resourse;
 import utils.DBdata;
 
@@ -12,11 +13,13 @@ public class AppCore {
 	
 	private Database database;
 	private Settings settings;
+	private TableModel tableModel;
 	
 	public AppCore() {
 		// TODO Auto-generated constructor stub
 		this.settings = initSettings();
 		this.database = new DatabaseImpl(new SQLrepositoryImpl(this.settings));
+		tableModel = new TableModel();
 	}
 	
 	
@@ -29,11 +32,26 @@ public class AppCore {
 		return settingsImpl;
 	}
 	
-	public void loadResource() {
+	public Resourse loadResource() {
 		Resourse resource = (Resourse) this.database.loadResourse();
+		return resource;
 	}
 	
 	public void ReadDataFromTable(String fromTable) {
-		this.database.readDataFromTable(fromTable);
+		tableModel.setRows(this.database.readDataFromTable(fromTable));
+	}
+	
+	public Database getDatabase() {
+		return database;
+	}
+	public Settings getSettings() {
+		return settings;
+	}
+	
+	public TableModel getTableModel() {
+		return tableModel;
+	}
+	public void setTableModel(TableModel tableModel) {
+		this.tableModel = tableModel;
 	}
 }

@@ -3,10 +3,11 @@ package db;
 import java.util.List;
 
 import model.DBNode;
+import model.data.Row;
 
 public interface Repository {
 	
 	DBNode getSchema();
 	
-	List<String> get(String from);
+	List<Row> get(String from);
 }

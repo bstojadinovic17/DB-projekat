@@ -7,8 +7,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 
+import gui.tree.Tree;
 import main.AppCore;
+import model.tree.TreeModel;
 
 
 public class MainView extends JFrame{
@@ -16,10 +19,15 @@ public class MainView extends JFrame{
 	private static MainView instance=null;
 	
 	private AppCore appCore;
+	
 	private ToolBar toolbar;
 	private DesnoGore desnoGore;
 	private DesnoDole desnoDole;
 	
+	private TreeModel treeModel;
+	private Tree tree;
+	
+	private JTable table;
 	
 	private MainView() {
 		
@@ -27,6 +35,7 @@ public class MainView extends JFrame{
 	
 	
 	private void initialize() {
+		initializeTree();
 		initializeGUI();
 	}
 
@@ -36,15 +45,21 @@ public class MainView extends JFrame{
 		setSize(1000, 800);
 		setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-		setVisible(true);
-		setResizable(false);
+		setVisible(false);
+		//setResizable(false);
 		toolbar = new ToolBar();
 		add(toolbar, BorderLayout.NORTH);
 		
-		JScrollPane scrollTree = new JScrollPane();
+		
+		JScrollPane scrollTree = new JScrollPane(tree);
 		scrollTree.setMinimumSize(new Dimension(250,750));
 		JPanel desno = new JPanel(new BorderLayout());
-		JScrollPane scrollDesno = new JScrollPane();
+		table = new JTable();
+		table.setPreferredScrollableViewportSize(new Dimension(500, 400));
+        table.setFillsViewportHeight(true);
+        
+        desnoGore = DesnoGore.getInstance();
+		JScrollPane scrollDesno = new JScrollPane(table);
 		scrollDesno.setPreferredSize(new Dimension(700, 350));
 		desnoDole = DesnoDole.getInstance();
 		desnoDole.setPreferredSize(new Dimension(700, 350));
@@ -55,6 +70,11 @@ public class MainView extends JFrame{
 		
 	}
 	
+	private void initializeTree() {
+		tree = new Tree();
+		treeModel = new TreeModel();
+		tree.setModel(treeModel);
+	}
 	public static MainView getinstance() {
 		if(instance==null) {
 			instance=new MainView();
@@ -68,5 +88,18 @@ public class MainView extends JFrame{
 	}
 	public void setAppCore(AppCore appCore) {
 		this.appCore = appCore;
+		initializeTree();
+		this.table.setModel(appCore.getTableModel());
+	}
+	
+	public Tree getTree() {
+		return tree;
+	}
+	public TreeModel getTreeModel() {
+		return treeModel;
+	}
+	
+	public JTable getTable() {
+		return table;
 	}
 }

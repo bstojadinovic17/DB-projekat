@@ -1,5 +1,10 @@
 package model.categories;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import javax.swing.tree.TreeNode;
+
 import model.DBNode;
 import model.DBNodeComposite;
 import model.enums.AttributeType;
@@ -9,7 +14,7 @@ public class Attribute extends DBNodeComposite{
 	
 	private AttributeType attributeType;
 	private int lenght;
-	private Attribute inRelationWith;
+	private ArrayList<Attribute> inRelationWith;
 	
 	public Attribute(String name, DBNode parent) {
 		super(name, parent);
@@ -37,8 +42,11 @@ public class Attribute extends DBNodeComposite{
 	public int getLenght() {
 		return lenght;
 	}
-	public Attribute getInRelationWith() {
+	public ArrayList<Attribute> getInRelationWith() {
 		return inRelationWith;
 	}
+
+
+	
 	
 }

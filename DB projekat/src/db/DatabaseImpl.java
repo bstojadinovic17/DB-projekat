@@ -3,6 +3,7 @@ package db;
 import java.util.List;
 
 import model.DBNode;
+import model.data.Row;
 
 public class DatabaseImpl implements Database{
 	
@@ -19,8 +20,12 @@ public class DatabaseImpl implements Database{
 	}
 
 	@Override
-	public List<String> readDataFromTable(String tableName) {
-		return repository.get(tableName);
+	public List<Row> readDataFromTable(String from) {
+		return repository.get(from);
 	}
 
+	
+	public Repository getRepository() {
+		return repository;
+	}
 }

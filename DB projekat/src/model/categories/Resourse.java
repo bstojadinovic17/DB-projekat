@@ -1,5 +1,9 @@
 package model.categories;
 
+import java.util.Enumeration;
+
+import javax.swing.tree.TreeNode;
+
 import model.DBNode;
 import model.DBNodeComposite;
 import model.enums.ConstraintType;
@@ -29,4 +33,5 @@ public class Resourse extends DBNodeComposite {
 		// TODO Auto-generated method stub
 		return super.toString();
 	}
+
 }
