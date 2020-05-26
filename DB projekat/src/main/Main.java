@@ -11,7 +11,7 @@ public class Main {
 		MainView frame = MainView.getinstance();
 		frame.setAppCore(appCore);
 		frame.setVisible(true);
-		frame.getAppCore().ReadDataFromTable("DEPARTMENTS");
+		
 	}
 
 }

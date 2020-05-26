@@ -21,7 +21,6 @@ public class MainView extends JFrame{
 	private AppCore appCore;
 	
 	private ToolBar toolbar;
-	private DesnoGore desnoGore;
 	private DesnoDole desnoDole;
 	
 	private TreeModel treeModel;
@@ -53,17 +52,18 @@ public class MainView extends JFrame{
 		
 		JScrollPane scrollTree = new JScrollPane(tree);
 		scrollTree.setMinimumSize(new Dimension(250,750));
+		
 		JPanel desno = new JPanel(new BorderLayout());
-		table = new JTable();
-		table.setPreferredScrollableViewportSize(new Dimension(500, 400));
-        table.setFillsViewportHeight(true);
+		/*table = new JTable();
+		table.setPreferredScrollableViewportSize(new Dimension(400, 350));
+        table.setFillsViewportHeight(true);*/
         
-        desnoGore = DesnoGore.getInstance();
-		JScrollPane scrollDesno = new JScrollPane(table);
-		scrollDesno.setPreferredSize(new Dimension(700, 350));
+        Tab tabovi = Tab.getInstance();
+        JPanel panelTab = new JPanel(new BorderLayout());
+        panelTab.add(tabovi.getTabbedPane(), BorderLayout.CENTER);
 		desnoDole = DesnoDole.getInstance();
 		desnoDole.setPreferredSize(new Dimension(700, 350));
-		JSplitPane splitVer=new JSplitPane(JSplitPane.VERTICAL_SPLIT,scrollDesno,desnoDole);
+		JSplitPane splitVer=new JSplitPane(JSplitPane.VERTICAL_SPLIT,panelTab,desnoDole);
 		desno.add(splitVer,BorderLayout.SOUTH);
 		JSplitPane splitHor=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,desno);
 		add(splitHor,BorderLayout.CENTER);
@@ -88,8 +88,7 @@ public class MainView extends JFrame{
 	}
 	public void setAppCore(AppCore appCore) {
 		this.appCore = appCore;
-		initializeTree();
-		this.table.setModel(appCore.getTableModel());
+		//initializeTree();
 	}
 	
 	public Tree getTree() {
