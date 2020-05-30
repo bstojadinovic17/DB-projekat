@@ -41,6 +41,8 @@ public class AppCore {
 		tableModel.setRows(this.database.readDataFromTable(fromTable));
 	}
 	
+	
+	
 	public Database getDatabase() {
 		return database;
 	}

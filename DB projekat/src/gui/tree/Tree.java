@@ -54,7 +54,22 @@ public class Tree extends JTree{
 				DBNode selektovan = (DBNode) MainView.getinstance().getTree().getLastSelectedPathComponent();
 				if(e.getClickCount() == 2) {
 					if(selektovan instanceof Table) {
+						Table t = (Table) selektovan;
 						Tab.getInstance().dodajTab(selektovan);
+						boolean ima = false;
+						if(Tab.getInstance().getTabele().isEmpty()) {
+							Tab.getInstance().getTabele().add(t);
+						}else {
+							for(Table tabela:Tab.getInstance().getTabele()) {
+								if(tabela.equals(t)) {
+									ima = true;
+									break;
+								}
+							}
+							if(ima == false) {
+								Tab.getInstance().getTabele().add(t);
+							}
+						}
 						
 					}
 				}

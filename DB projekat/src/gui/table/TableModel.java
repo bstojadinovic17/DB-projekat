@@ -29,5 +29,13 @@ public class TableModel extends DefaultTableModel{
         this.rows = list;
         updateModel();
     }
+    
+    @Override
+    public boolean isCellEditable(int row, int column) {
+    	// TODO Auto-generated method stub
+    	return true;
+    }
+    
+    
 	}
 

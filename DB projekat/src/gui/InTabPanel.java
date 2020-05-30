@@ -19,19 +19,45 @@ public class InTabPanel extends JPanel{
 		// TODO Auto-generated constructor stub
 		this.tabela = table;
 		toolbar = new JToolBar();
-		toolbar.setSize(100,350);
-		setSize(new Dimension(550, 350));
+		toolbar.setSize(700,80);
+		setSize(new Dimension(700, 350));
 		setLayout(new BorderLayout());
 		JScrollPane scrollTable = new JScrollPane(tabela);
-		scrollTable.setMinimumSize(new Dimension(450, 350));
+		scrollTable.setMinimumSize(new Dimension(700, 270));
 		
-		//JButton btnAdd = new JButton("Add");
-		//btnAdd.setSize(new Dimension(50,25));
-		//toolbar.add(btnAdd);
+		JButton btnAdd = new JButton("Add");
+		btnAdd.setSize(new Dimension(40,25));
+		btnAdd.addActionListener(MainView.getinstance().getActionManager().getAddAction());
+		toolbar.add(btnAdd);
+		toolbar.addSeparator();
+		
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.setSize(new Dimension(40,25));
+		btnDelete.addActionListener(MainView.getinstance().getActionManager().getDeleteAction());
+		toolbar.add(btnDelete);
+		toolbar.addSeparator();
+		
+		JButton btnUpdate = new JButton("Update");
+		btnUpdate.setSize(new Dimension(40,25));
+		toolbar.add(btnUpdate);
+		toolbar.addSeparator();
+		
+		JButton btnFilter = new JButton("Filter & Sort");
+		btnFilter.setSize(new Dimension(50,25));
+		toolbar.add(btnFilter);
+		toolbar.addSeparator();
+		
+		JButton btnSearch = new JButton("Search");
+		btnSearch.setSize(new Dimension(40,25));
+		toolbar.add(btnSearch);
+		toolbar.addSeparator();
+		
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollTable, toolbar);
-		add(scrollTable, BorderLayout.NORTH);
+		add(split, BorderLayout.CENTER);
 		setVisible(true);
 	}
 	
-	
+	public JTable getTabela() {
+		return tabela;
+	}
 }

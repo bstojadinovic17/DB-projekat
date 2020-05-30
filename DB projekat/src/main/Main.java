@@ -1,8 +1,6 @@
 package main;
 
-import db.SQLrepositoryImpl;
 import gui.MainView;
-import model.categories.Resourse;
 
 public class Main {
 

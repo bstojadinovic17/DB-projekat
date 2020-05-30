@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 
+import actions.ActionManager;
 import gui.tree.Tree;
 import main.AppCore;
 import model.tree.TreeModel;
@@ -20,6 +21,7 @@ public class MainView extends JFrame{
 	
 	private AppCore appCore;
 	
+	private ActionManager actionManager;
 	private ToolBar toolbar;
 	private DesnoDole desnoDole;
 	
@@ -34,6 +36,7 @@ public class MainView extends JFrame{
 	
 	
 	private void initialize() {
+		actionManager = new ActionManager();
 		initializeTree();
 		initializeGUI();
 	}
@@ -54,12 +57,9 @@ public class MainView extends JFrame{
 		scrollTree.setMinimumSize(new Dimension(250,750));
 		
 		JPanel desno = new JPanel(new BorderLayout());
-		/*table = new JTable();
-		table.setPreferredScrollableViewportSize(new Dimension(400, 350));
-        table.setFillsViewportHeight(true);*/
-        
         Tab tabovi = Tab.getInstance();
         JPanel panelTab = new JPanel(new BorderLayout());
+        panelTab.setPreferredSize(new Dimension(700, 350));
         panelTab.add(tabovi.getTabbedPane(), BorderLayout.CENTER);
 		desnoDole = DesnoDole.getInstance();
 		desnoDole.setPreferredSize(new Dimension(700, 350));
@@ -100,5 +100,8 @@ public class MainView extends JFrame{
 	
 	public JTable getTable() {
 		return table;
+	}
+	public ActionManager getActionManager() {
+		return actionManager;
 	}
 }

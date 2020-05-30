@@ -1,8 +1,11 @@
 package db;
 
 import java.util.List;
+import java.util.Vector;
 
 import model.DBNode;
+import model.categories.Attribute;
+import model.categories.Table;
 import model.data.Row;
 
 public class DatabaseImpl implements Database{
@@ -27,5 +30,17 @@ public class DatabaseImpl implements Database{
 	
 	public Repository getRepository() {
 		return repository;
+	}
+
+	@Override
+	public void deleteData(String from, String columnName, String value) {
+		// TODO Auto-generated method stub
+		repository.delete(from, columnName, value);
+	}
+
+	@Override
+	public void addData(Table toTableName) {
+		// TODO Auto-generated method stub
+		repository.add(toTableName);
 	}
 }

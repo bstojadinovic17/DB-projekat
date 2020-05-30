@@ -57,6 +57,9 @@ public class AttributeConstraints extends DBNode{
 		// TODO Auto-generated method stub
 		return true;
 	}
-
+	
+	public ConstraintType getConstraintType() {
+		return constraintType;
+	}
 	
 }

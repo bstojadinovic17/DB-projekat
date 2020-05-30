@@ -3,6 +3,7 @@ package gui;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -16,13 +17,13 @@ public class Tab extends JTabbedPane{
 	private static Tab instance = null;
 	private JTabbedPane tabbedPane;
 	private static ArrayList<Table> tabele;
-	
+	private JButton closeButton;
 	private Tab() {
 		// TODO Auto-generated constructor stub
 		
 		tabele = new ArrayList<>();
 		tabbedPane = new JTabbedPane();
-		tabbedPane.setSize(new Dimension(550,350));
+		tabbedPane.setSize(new Dimension(700,350));
 		tabbedPane.setVisible(true);
 	}
 	
@@ -46,9 +47,9 @@ public class Tab extends JTabbedPane{
 				TableModel model = new TableModel();
 				model.setRows(MainView.getinstance().getAppCore().getDatabase().readDataFromTable(t.getName()));
 				tabela.setModel(model);
+				tabela.setRowSelectionAllowed(true);
 				InTabPanel panel = new InTabPanel(tabela);
 				tabbedPane.addTab(t.getName(), panel);
-				System.out.println(t.getName() + " dodat");
 				tabbedPane.setFocusable(true);
 				tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
 			}
@@ -62,5 +63,9 @@ public class Tab extends JTabbedPane{
 	
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
+	}
+	
+	public static ArrayList<Table> getTabele() {
+		return tabele;
 	}
 }
