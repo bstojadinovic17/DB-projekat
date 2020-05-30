@@ -44,6 +44,7 @@ public class AddAction extends AbstractAction{
 		
 		Table tabela = Tab.getInstance().getTabele().get(indexTaba);
 		MainView.getinstance().getAppCore().getDatabase().addData(tabela);
+		
 	}
 
 	

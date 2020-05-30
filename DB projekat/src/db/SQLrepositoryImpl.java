@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.lang.reflect.GenericArrayType;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -19,6 +21,7 @@ import javax.swing.JOptionPane;
 
 import db.settings.Settings;
 import gui.Tab;
+import lombok.val;
 import model.DBNode;
 import model.DBNodeComposite;
 import model.categories.Attribute;
@@ -107,19 +110,28 @@ public class SQLrepositoryImpl implements Repository{
 						}
 					}
 					
-				}
 				
+				}
+					
 				while(FK.next()) {
-					for(DBNode t: resourse.getChildren()) {
-						Table trenutnaTabela = (Table) t;
-							for(DBNode a: trenutnaTabela.getChildren()) {
-								Attribute trenutniAtribut = (Attribute) a;
-								if(FK.getString("PKCOLUMN_NAME").equals(trenutniAtribut.getName())) {
-									AttributeConstraints foreignKey = new AttributeConstraints(FK.getString("FK_NAME"), trenutniAtribut, ConstraintType.FOREIGN_KEY);
-									trenutniAtribut.addChild(foreignKey);
+					//System.out.println(FK.getString("FKCOLUMN_NAME"));
+					for(DBNode a: newTable.getChildren()) {
+						Attribute attribute = (Attribute) a;
+							if(attribute.getName().equals(FK.getString("PKCOLUMN_NAME")) && !(FK.getString("PKTABLE_NAME").equals(newTable))) {
+								AttributeConstraints foreignKey = new AttributeConstraints(FK.getString("FK_NAME"), attribute, ConstraintType.FOREIGN_KEY);
+								attribute.addChild(foreignKey);
+							}
+							if(attribute.getName().equals(FK.getString("FKCOLUMN_NAME"))) {
+								//System.out.println(FK.getString("PKCOLUMN_NAME"));
+								if(!(FK.getString("PKCOLUMN_NAME").equals(FK.getString("FKCOLUMN_NAME")))) {
+									AttributeConstraints foreignKey = new AttributeConstraints(FK.getString("FK_NAME"), attribute, ConstraintType.FOREIGN_KEY);
+									attribute.addChild(foreignKey);
 								}
 							}
+							
 					}
+					
+					
 				}
 				
 				
@@ -175,7 +187,10 @@ public class SQLrepositoryImpl implements Repository{
 		
 		return rows;
 	}
-
+	
+	private void deleteonCascade(String tableName) {
+		
+	}
 	@Override
 	public void delete(String from, String columnName, String value) {
 		// TODO Auto-generated method stub
@@ -186,23 +201,23 @@ public class SQLrepositoryImpl implements Repository{
 			DatabaseMetaData metaData = connection.getMetaData();
 			String tableType[] = {"TABLE"};
 			ResultSet tables = metaData.getTables(connection.getCatalog(), null, null, tableType);
-			
+			HashMap<String, String> mapa = new HashMap<String, String>();
 			while(tables.next()) {
 				String tableName = tables.getString("TABLE_NAME");
 				ResultSet FK = metaData.getImportedKeys(connection.getCatalog(), null, tableName);
 				while(FK.next()) {
-					String pk_name = FK.getString("PK_NAME");
+					String pk_name = FK.getString("PKCOLUMN_NAME");
 					if(pk_name.contains(columnName)) {
-		
+						//System.out.println(pk_name + " = " + columnName);
 						String fk_tableName = FK.getString("FKTABLE_NAME");
 						String query = "DELETE FROM "+ fk_tableName + " WHERE " + columnName +" = " + "'"+ value +"'";
 						PreparedStatement preparedStatement = connection.prepareStatement(query);
 						preparedStatement.executeUpdate();
+						mapa.put(fk_tableName, pk_name);
 					}
 				}
 				
-			}
-			
+			} 
 			
 			String query = "DELETE FROM "+ from + " WHERE " + columnName +" = " + "'"+ value +"'";
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -228,6 +243,7 @@ public class SQLrepositoryImpl implements Repository{
 			ArrayList<DBNode> atributi = (ArrayList<DBNode>) to.getChildren();
 			int cnt = to.getChildCount();
 			ArrayList<Object> values = new ArrayList<>();
+			ArrayList<Boolean> boleans = new ArrayList<>();
 			String query = "INSERT INTO "+ to.getName() + " (";
 			for(DBNode a: atributi) {
 				Attribute atribut = (Attribute) a;
@@ -241,27 +257,51 @@ public class SQLrepositoryImpl implements Repository{
 				}
 				
 				String poruka = atribut.getName()+": ";
+				boolean isString = false;
 				Object value = null;
-				if(type.toString().contains("char") || type.toString().contains("text")) {
+				if(type.toString().contains("CHAR") || type.toString().contains("TEXT")) {
 					value = JOptionPane.showInputDialog(poruka);
-				} else if(type.toString().contains("int") || type.toString().contains("numeric")) {
+					isString = true;
+					while(value.toString().length() > lenght) {
+						JOptionPane.showMessageDialog(null, "Ne moze duze od "+lenght+ " karaktera!");
+						value = JOptionPane.showInputDialog(poruka);
+					}
+				} else if(type.toString().contains("INT") || type.toString().contains("NUMERIC")) {
 					value = Integer.parseInt(JOptionPane.showInputDialog(poruka));
-				} else if(type.toString().contains("float") || type.toString().contains("decimal")) {
+				} else if(type.toString().contains("FLOAT") || type.toString().contains("DECIMAL")) {
 					value = Float.parseFloat(JOptionPane.showInputDialog(poruka));
-				} else {
+				} else if(type.toString().contains("DATE") || type.toString().contains("TIME")) {
+					value = Date.parse(JOptionPane.showInputDialog(poruka));
+				}else {
 					value = JOptionPane.showInputDialog(poruka);
 				}
 				
-				if(value.equals("")) {
+				while(value.equals("")) {
 					if(atribut.getChildByName("NOT NULL") !=null) {
-						JOptionPane.showConfirmDialog(null, "Ne mozete ostaviti prazno polje!");
+						JOptionPane.showMessageDialog(null, "NE MOZE PRAZNO!");
 						value = JOptionPane.showInputDialog(poruka);
+					}else{
+						value = "";
+						break;
 					}
 				}
+				
+				values.add(value);
+				boleans.add(isString);
 			}
+			for(int i=0;i<values.size()-1;i++) {
+				if(boleans.get(i)) {
+					query+= "'"+values.get(i)+"' , ";
+				}else {
+					query+=values.get(i)+" , ";
+				}
+				
+			}
+			query+=values.get(values.size()-1)+")";	
 			System.out.println(query);
 			
-			
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.executeUpdate();
 					
 		} catch (Exception e) {
 			// TODO: handle exception
