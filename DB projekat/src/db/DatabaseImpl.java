@@ -43,7 +43,8 @@ public class DatabaseImpl implements Database{
 		// TODO Auto-generated method stub
 		repository.add(toTableName);
 	}
-
+	
+	
 	@Override
 	public List<Row> filterData(String from, List<String> data) {
 		// TODO Auto-generated method stub
@@ -55,4 +56,24 @@ public class DatabaseImpl implements Database{
 		// TODO Auto-generated method stub
 		return repository.sort(from,column,order);
 	}
+
+	@Override
+	public List<Row> countData(String from, String countColumn, List<String> data) {
+		// TODO Auto-generated method stub
+		return repository.count(from,countColumn, data);
+	}
+
+	@Override
+	public List<Row> averageData(String from, String averageColumn, List<String> data) {
+		// TODO Auto-generated method stub
+		return repository.average(from,averageColumn, data);
+	}
+
+	@Override
+	public void updateData(Table tabela, String pk, List<String> rowData) {
+		// TODO Auto-generated method stub
+		repository.update(tabela, pk, rowData);
+	}
+
+	
 }

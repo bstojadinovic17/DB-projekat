@@ -134,15 +134,17 @@ public class SQLrepositoryImpl implements Repository{
 									AttributeConstraints foreignKey = new AttributeConstraints(FK.getString("FK_NAME"), attribute, ConstraintType.FOREIGN_KEY);
 									attribute.addChild(foreignKey);
 								}
-							}
-							
+							}	
 					}
+					
 					
 					
 				}
 				
 				
 			}
+			
+			
 			
 			return resourse;
 		} catch (ClassNotFoundException e) {
@@ -195,9 +197,6 @@ public class SQLrepositoryImpl implements Repository{
 		return rows;
 	}
 	
-	private void deleteonCascade(String tableName) {
-		
-	}
 	@Override
 	public void delete(String from, String columnName, String value) {
 		// TODO Auto-generated method stub
@@ -228,11 +227,11 @@ public class SQLrepositoryImpl implements Repository{
 			
 			while(tables.next()) {
 				String tableName = tables.getString("TABLE_NAME");
-				ResultSet PK = metaData.getPrimaryKeys(connection.getCatalog(), null, tableName);
+				ResultSet FK = metaData.getImportedKeys(connection.getCatalog(), null, tableName);
 				String kolona = "";
 				System.out.println("Za tabelu "+ tableName);
-				while(PK.next()) {
-					kolona = PK.getString("COLUMN_NAME");
+				while(FK.next()) {
+					kolona = FK.getString("PKTABLE_NAME");
 					System.out.println(kolona);
 				}
 				System.out.println("---------------");
@@ -256,12 +255,9 @@ public class SQLrepositoryImpl implements Repository{
 		
 		try {
 			this.connect();
-			DatabaseMetaData metaData = connection.getMetaData();
-			
 			ArrayList<DBNode> atributi = (ArrayList<DBNode>) to.getChildren();
 			int cnt = to.getChildCount();
 			ArrayList<Object> values = new ArrayList<>();
-			ArrayList<Boolean> boleans = new ArrayList<>();
 			String query = "INSERT INTO "+ to.getName() + " (";
 			for(DBNode a: atributi) {
 				Attribute atribut = (Attribute) a;
@@ -275,14 +271,12 @@ public class SQLrepositoryImpl implements Repository{
 				}
 				
 				String poruka = atribut.getName()+": ";
-				boolean isString = false;
 				Object value = null;
 				if(type.toString().contains("CHAR") || type.toString().contains("TEXT")) {
 					value = JOptionPane.showInputDialog(poruka);
 					if(value == null) {
 						return;
 					}
-					isString = true;
 					while(value.toString().length() > lenght) {
 						JOptionPane.showMessageDialog(null, "Ne moze duze od "+lenght+ " karaktera!");
 						value = JOptionPane.showInputDialog(poruka);
@@ -311,22 +305,15 @@ public class SQLrepositoryImpl implements Repository{
 				}
 				
 				values.add(value);
-				boleans.add(isString);
 			}
 			for(int i=0;i<values.size()-1;i++) {
-				if(boleans.get(i)) {
 					query+= "'"+values.get(i)+"' , ";
-				}else {
-					query+=values.get(i)+" , ";
-				}
-				
 			}
-			query+=values.get(values.size()-1)+")";	
-			System.out.println(query);
+			query+="'"+values.get(values.size()-1)+"' "+")";	
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
 			preparedStatement.executeUpdate();
-					
+			JOptionPane.showMessageDialog(null, "Red uspesno dodat!");
 		} catch (Exception e) {
 			// TODO: handle exception
 			//e.printStackTrace();
@@ -346,7 +333,39 @@ public class SQLrepositoryImpl implements Repository{
 			this.closeConnection();
 		}
 	}
-
+	
+	@Override
+	public void update(Table tabela, String pk ,List<String> rowData) {
+		// TODO Auto-generated method stub
+		try {
+			this.connect();
+			ArrayList<DBNode> atributi = (ArrayList<DBNode>) tabela.getChildren();
+			int cnt = 0;
+			String query = "UPDATE "+tabela.getName()+" SET ";
+			for(DBNode a:atributi) {
+				Attribute atribut = (Attribute) a;
+				AttributeType type = atribut.getAttributeType();
+				int lenght = atribut.getLenght();
+				
+				String poruka = atribut.getName()+":";
+				String currentData = rowData.get(cnt);
+				Object value = null;
+				if(type.toString().contains("CHAR") || type.toString().contains("TEXT")) {
+					value = JOptionPane.showInputDialog(poruka, currentData);
+					if(value == null) {
+						return;
+					}
+				}
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			
+		} finally {
+			this.closeConnection();
+		}
+	}
+	
 	@Override
 	public List<Row> filter(String from, List<String> data) {
 		List<Row> rows = new ArrayList<>();
@@ -408,6 +427,91 @@ public class SQLrepositoryImpl implements Repository{
 		}
 		return rows;
 	}
+
+	@Override
+	public List<Row> count(String from, String countColumn, List<String> data) {
+		// TODO Auto-generated method stub
+		List<Row> rows = new ArrayList<>();
+		try {
+			this.connect();
+			String query = "SELECT COUNT("+countColumn+"), ";
+			for(String s: data) {
+				if(data.indexOf(s)== data.size()-1) {
+					query+=s;
+				}else {
+					query+=s+" , ";
+				}
+			}
+			query+= " FROM "+from+" GROUP BY ";
+			for(String s: data) {
+				if(data.indexOf(s)== data.size()-1) {
+					query+=s;
+				}else {
+					query+=s+" , ";
+				}
+			}
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()) {
+				Row row = new Row();
+				row.setName(from);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for(int i=1;i<=rsmd.getColumnCount();i++) {
+					row.addField(rsmd.getColumnName(i), rs.getString(i));
+				}
+				rows.add(row);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return rows;
+	}
+
+	@Override
+	public List<Row> average(String from, String averageColumn, List<String> data) {
+		// TODO Auto-generated method stub
+		List<Row> rows = new ArrayList<>();
+		System.out.println(data);
+		try {
+			this.connect();
+			String query = " SELECT ";
+			for(String s: data) {
+				query+=s+" , ";
+			}
+			query+=" AVG("+averageColumn+") FROM "+from+" GROUP BY ";
+			for(String s: data) {
+				if(data.indexOf(s)== data.size()-1) {
+					query+=s;
+				}else {
+					query+=s+" , ";
+				}
+			}
+			//System.out.println(query);
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()) {
+				Row row = new Row();
+				row.setName(from);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for(int i=1;i<=rsmd.getColumnCount();i++) {
+					row.addField(rsmd.getColumnName(i), rs.getString(i));
+				}
+				rows.add(row);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return rows;
+	}
+
+	
 
 	
 

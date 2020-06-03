@@ -7,6 +7,8 @@ public class ActionManager {
 	private UpdateAction updateAction;
 	private FilterAction filterAction;
 	private SortAction sortAction;
+	private CountAction countAction;
+	private AverageAction averageAction;
 	private RefreshAction refreshAction;
 	public ActionManager() {
 		initialization();
@@ -16,10 +18,12 @@ public class ActionManager {
 		// TODO Auto-generated method stub
 		addAction = new AddAction();
 		deleteAction = new DeleteAction();
-		refreshAction = new RefreshAction();
 		updateAction = new UpdateAction();
 		filterAction = new FilterAction();
 		sortAction = new SortAction();
+		countAction = new CountAction();
+		averageAction = new AverageAction();
+		refreshAction = new RefreshAction();
 	}
 	
 	public AddAction getAddAction() {
@@ -39,5 +43,11 @@ public class ActionManager {
 	}
 	public SortAction getSortAction() {
 		return sortAction;
+	}
+	public CountAction getCountAction() {
+		return countAction;
+	}
+	public AverageAction getAverageAction() {
+		return averageAction;
 	}
 }

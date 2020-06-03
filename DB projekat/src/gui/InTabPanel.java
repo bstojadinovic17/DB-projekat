@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -10,11 +11,12 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
+
+
 public class InTabPanel extends JPanel{
 	
 	private JTable tabela;
 	private JToolBar toolbar;
-	
 	public InTabPanel(JTable table) {
 		// TODO Auto-generated constructor stub
 		this.tabela = table;
@@ -62,11 +64,13 @@ public class InTabPanel extends JPanel{
 		
 		JButton btnCount = new JButton("Count");
 		btnCount.setSize(new Dimension(40,25));
+		btnCount.addActionListener(MainView.getinstance().getActionManager().getCountAction());
 		toolbar.add(btnCount);
 		toolbar.addSeparator();
 		
-		JButton btnAverage = new JButton("Averaage");
+		JButton btnAverage = new JButton("Average");
 		btnAverage.setSize(new Dimension(40,25));
+		btnAverage.addActionListener(MainView.getinstance().getActionManager().getAverageAction());
 		toolbar.add(btnAverage);
 		toolbar.addSeparator();
 		
@@ -84,4 +88,6 @@ public class InTabPanel extends JPanel{
 	public JTable getTabela() {
 		return tabela;
 	}
+
+
 }

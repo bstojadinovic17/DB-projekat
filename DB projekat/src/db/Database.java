@@ -1,10 +1,7 @@
 package db;
 
 import java.util.List;
-import java.util.Vector;
-
 import model.DBNode;
-import model.categories.Attribute;
 import model.categories.Table;
 import model.data.Row;
 
@@ -18,7 +15,13 @@ public interface Database {
 	
 	void addData(Table tabela);
 	
+	void updateData(Table tabela, String pk ,List<String> rowData);
+	
 	List<Row> filterData(String from, List<String> data);
 	
 	List<Row> sortData(String from, String column, String order);
+	
+	List<Row> countData(String from, String countColumn, List<String> data);
+	
+	List<Row> averageData(String from, String averageColumn, List<String> data);
 }

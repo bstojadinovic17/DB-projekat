@@ -18,7 +18,17 @@ public interface Repository {
 	
 	void add(Table toTableName);
 
+	void update(Table tabela, String pk, List<String> rowData);
+	
 	List<Row> filter(String from, List<String> data);
 
 	List<Row> sort(String from, String column, String order);
+
+	List<Row> count(String from, String countColumn, List<String> data);
+
+	List<Row> average(String from, String averageColumn, List<String> data);
+
+	
+
+	
 }
