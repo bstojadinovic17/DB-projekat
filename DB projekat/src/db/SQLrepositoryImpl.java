@@ -1,6 +1,8 @@
 package db;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.GenericArrayType;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -17,7 +19,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import db.settings.Settings;
 import gui.Tab;
@@ -201,8 +208,8 @@ public class SQLrepositoryImpl implements Repository{
 			DatabaseMetaData metaData = connection.getMetaData();
 			String tableType[] = {"TABLE"};
 			ResultSet tables = metaData.getTables(connection.getCatalog(), null, null, tableType);
-			HashMap<String, String> mapa = new HashMap<String, String>();
-			while(tables.next()) {
+			System.out.println(tables);
+			/*while(tables.next()) {
 				String tableName = tables.getString("TABLE_NAME");
 				ResultSet FK = metaData.getImportedKeys(connection.getCatalog(), null, tableName);
 				while(FK.next()) {
@@ -213,16 +220,27 @@ public class SQLrepositoryImpl implements Repository{
 						String query = "DELETE FROM "+ fk_tableName + " WHERE " + columnName +" = " + "'"+ value +"'";
 						PreparedStatement preparedStatement = connection.prepareStatement(query);
 						preparedStatement.executeUpdate();
-						mapa.put(fk_tableName, pk_name);
+		
 					}
 				}
 				
-			} 
+			} */
 			
-			String query = "DELETE FROM "+ from + " WHERE " + columnName +" = " + "'"+ value +"'";
+			while(tables.next()) {
+				String tableName = tables.getString("TABLE_NAME");
+				ResultSet PK = metaData.getPrimaryKeys(connection.getCatalog(), null, tableName);
+				String kolona = "";
+				System.out.println("Za tabelu "+ tableName);
+				while(PK.next()) {
+					kolona = PK.getString("COLUMN_NAME");
+					System.out.println(kolona);
+				}
+				System.out.println("---------------");
+			}
+			/*String query = "DELETE FROM "+ from + " WHERE " + columnName +" = " + "'"+ value +"'";
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			preparedStatement.executeUpdate();
-			System.out.println("obrisan red");
+			preparedStatement.execute();
+			System.out.println("obrisan red");*/
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -261,13 +279,19 @@ public class SQLrepositoryImpl implements Repository{
 				Object value = null;
 				if(type.toString().contains("CHAR") || type.toString().contains("TEXT")) {
 					value = JOptionPane.showInputDialog(poruka);
+					if(value == null) {
+						return;
+					}
 					isString = true;
 					while(value.toString().length() > lenght) {
 						JOptionPane.showMessageDialog(null, "Ne moze duze od "+lenght+ " karaktera!");
 						value = JOptionPane.showInputDialog(poruka);
+						if(value == null) {
+							return;
+						}
 					}
 				} else if(type.toString().contains("INT") || type.toString().contains("NUMERIC")) {
-					value = Integer.parseInt(JOptionPane.showInputDialog(poruka));
+					value = Integer.parseInt(JOptionPane.showInputDialog(poruka));	
 				} else if(type.toString().contains("FLOAT") || type.toString().contains("DECIMAL")) {
 					value = Float.parseFloat(JOptionPane.showInputDialog(poruka));
 				} else if(type.toString().contains("DATE") || type.toString().contains("TIME")) {
@@ -305,10 +329,84 @@ public class SQLrepositoryImpl implements Repository{
 					
 		} catch (Exception e) {
 			// TODO: handle exception
+			//e.printStackTrace();
+			if(e.toString().contains("duplicate key")) {
+				JOptionPane.showMessageDialog(null, "Primarni kljuc vec postoji u tabeli!");
+				return;
+			}
+			else if(e.toString().contains("conflicted with the FOREIGN KEY")){
+				JOptionPane.showMessageDialog(null, "Uneli ste vrednost za foreign key koja ne postoji u toj tabeli!");
+				return;
+			}
+			else {
+				e.printStackTrace();
+			}
+			
+		} finally {
+			this.closeConnection();
+		}
+	}
+
+	@Override
+	public List<Row> filter(String from, List<String> data) {
+		List<Row> rows = new ArrayList<>();
+		try {
+			this.connect();
+			String query = "SELECT ";
+			for(String s:data) {
+				if(data.indexOf(s)== data.size()-1) {
+					query+=s;
+				}else {
+					query+=s+" , ";
+				}
+			}
+			query+=" FROM "+from;
+			System.out.println(query);
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()) {
+				Row row = new Row();
+				row.setName(from);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for(int i=1;i<=rsmd.getColumnCount();i++) {
+					row.addField(rsmd.getColumnName(i), rs.getString(i));
+				}
+				rows.add(row);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
 			e.printStackTrace();
 		} finally {
 			this.closeConnection();
 		}
+		return rows;
+	}
+
+	@Override
+	public List<Row> sort(String from, String column, String order) {
+		// TODO Auto-generated method stub
+		List<Row> rows = new ArrayList<>();
+		try {
+			this.connect();
+			String query = "SELECT * FROM "+from+ " ORDER BY "+ column+ " "+ order;
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()) {
+				Row row = new Row();
+				row.setName(from);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for(int i=1;i<=rsmd.getColumnCount();i++) {
+					row.addField(rsmd.getColumnName(i), rs.getString(i));
+				}
+				rows.add(row);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return rows;
 	}
 
 	

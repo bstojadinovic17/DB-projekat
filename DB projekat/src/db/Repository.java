@@ -17,4 +17,8 @@ public interface Repository {
 	void delete(String from, String column, String value);
 	
 	void add(Table toTableName);
+
+	List<Row> filter(String from, List<String> data);
+
+	List<Row> sort(String from, String column, String order);
 }

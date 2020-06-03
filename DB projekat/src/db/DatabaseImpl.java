@@ -43,4 +43,16 @@ public class DatabaseImpl implements Database{
 		// TODO Auto-generated method stub
 		repository.add(toTableName);
 	}
+
+	@Override
+	public List<Row> filterData(String from, List<String> data) {
+		// TODO Auto-generated method stub
+		return repository.filter(from, data);
+	}
+
+	@Override
+	public List<Row> sortData(String from, String column, String order) {
+		// TODO Auto-generated method stub
+		return repository.sort(from,column,order);
+	}
 }
