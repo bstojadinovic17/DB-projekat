@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 
 import db.settings.Settings;
 import gui.Tab;
-import lombok.val;
 import model.DBNode;
 import model.DBNodeComposite;
 import model.categories.Attribute;
@@ -511,7 +510,41 @@ public class SQLrepositoryImpl implements Repository{
 		return rows;
 	}
 
-	
+	/*public List<Row> getTableModelFromTableName(String from, String column, String value){
+
+	}*/
+
+	public List<String> getTableModelFromRow(String tableName){
+		try {
+			this.connect();
+			DatabaseMetaData metaData = connection.getMetaData();
+			String tableType[] = {"TABLE"};
+			ResultSet tables = metaData.getTables(connection.getCatalog(), null, null, tableType);
+			System.out.println(tables);
+			List<String> toReturn = new ArrayList<>();
+			while(tables.next()) {
+				if(tableName.equals(tables.getString("TABLE_NAME"))){
+					ResultSet FK = metaData.getImportedKeys(connection.getCatalog(), null, tableName);
+					String kolona = "";
+					System.out.println("Za tabelu "+ tableName);
+					while(FK.next()) {
+						kolona = FK.getString("PKTABLE_NAME");
+						System.out.println(kolona);
+						toReturn.add(kolona);
+					}
+					System.out.println("---------------");
+				}
+				}
+
+				return toReturn;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+			return null;
+	}
 
 	
 

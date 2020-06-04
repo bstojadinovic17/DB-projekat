@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
-import lombok.ToString;
+
 import model.categories.AttributeConstraints;
 
 

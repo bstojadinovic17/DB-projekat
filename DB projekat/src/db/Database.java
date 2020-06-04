@@ -24,4 +24,6 @@ public interface Database {
 	List<Row> countData(String from, String countColumn, List<String> data);
 	
 	List<Row> averageData(String from, String averageColumn, List<String> data);
+
+	public List<String> getTableModelFromRow(String tableName);
 }

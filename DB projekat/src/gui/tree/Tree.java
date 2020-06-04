@@ -70,6 +70,7 @@ public class Tree extends JTree{
 								Tab.getInstance().getTabele().add(t);
 							}
 						}
+						MainView.getinstance().notify(t, null, null, 0);
 						
 					}
 				}

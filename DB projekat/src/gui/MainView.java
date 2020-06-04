@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,9 +15,11 @@ import actions.ActionManager;
 import gui.tree.Tree;
 import main.AppCore;
 import model.tree.TreeModel;
+import observer.Observable;
+import observer.Observer;
 
 
-public class MainView extends JFrame{
+public class MainView extends JFrame implements Observable {
 	
 	private static MainView instance=null;
 	
@@ -29,6 +33,8 @@ public class MainView extends JFrame{
 	private Tree tree;
 	
 	private JTable table;
+
+	private List<Observer> observerList = new ArrayList<>();
 	
 	private MainView() {
 		
@@ -36,6 +42,7 @@ public class MainView extends JFrame{
 	
 	
 	private void initialize() {
+		addObserver(TabDole.getInstance());
 		actionManager = new ActionManager();
 		initializeTree();
 		initializeGUI();
@@ -58,10 +65,12 @@ public class MainView extends JFrame{
 		
 		JPanel desno = new JPanel(new BorderLayout());
         Tab tabovi = Tab.getInstance();
-        JPanel panelTab = new JPanel(new BorderLayout());
+        TabDole tabovi2 = TabDole.getInstance();
+		JPanel panelTab = new JPanel(new BorderLayout());
         panelTab.setPreferredSize(new Dimension(700, 350));
         panelTab.add(tabovi.getTabbedPane(), BorderLayout.CENTER);
 		desnoDole = DesnoDole.getInstance();
+		desnoDole.add(tabovi2.getTabbedPane(), BorderLayout.CENTER);
 		desnoDole.setPreferredSize(new Dimension(700, 350));
 		JSplitPane splitVer=new JSplitPane(JSplitPane.VERTICAL_SPLIT,panelTab,desnoDole);
 		desno.add(splitVer,BorderLayout.SOUTH);
@@ -103,5 +112,19 @@ public class MainView extends JFrame{
 	}
 	public ActionManager getActionManager() {
 		return actionManager;
+	}
+
+	@Override
+	public void addObserver(Observer o) {
+		if( o != null && !observerList.contains(o)){
+			observerList.add(o);
+		}
+	}
+
+	@Override
+	public void notify(Object o, List<String> columnNames, List<String> values, int where) {
+		for(Observer obs : observerList){
+			obs.update(o, columnNames, values, where);
+		}
 	}
 }

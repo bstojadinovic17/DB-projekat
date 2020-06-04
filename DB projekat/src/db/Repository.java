@@ -28,7 +28,6 @@ public interface Repository {
 
 	List<Row> average(String from, String averageColumn, List<String> data);
 
-	
-
+	List<String> getTableModelFromRow(String tableName);
 	
 }

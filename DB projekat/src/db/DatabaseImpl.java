@@ -75,5 +75,8 @@ public class DatabaseImpl implements Database{
 		repository.update(tabela, pk, rowData);
 	}
 
-	
+	@Override
+	public List<String> getTableModelFromRow(String tableName){
+		return repository.getTableModelFromRow(tableName);
+	}
 }

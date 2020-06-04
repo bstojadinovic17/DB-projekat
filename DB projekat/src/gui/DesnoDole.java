@@ -6,7 +6,7 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
-public class DesnoDole extends JPanel implements Observer{
+public class DesnoDole extends JPanel{
 	
 	private static DesnoDole instance=null;
 	
@@ -15,11 +15,7 @@ public class DesnoDole extends JPanel implements Observer{
 		setVisible(true);
 	}
 	
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	
 	public static DesnoDole getInstance() {
