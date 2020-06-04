@@ -8,6 +8,7 @@ import model.DBNode;
 import model.categories.Attribute;
 import model.categories.Table;
 import model.data.Row;
+import observer.Observer;
 
 public class DatabaseImpl implements Database{
 	
@@ -76,4 +77,7 @@ public class DatabaseImpl implements Database{
 		// TODO Auto-generated method stub
 		return repository.filterIsort(from,data);
 	}
+
+
+
 }

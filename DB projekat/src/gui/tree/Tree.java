@@ -2,6 +2,8 @@ package gui.tree;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -12,14 +14,19 @@ import javax.swing.tree.TreeSelectionModel;
 import actions.TreeSelection;
 import gui.MainView;
 import gui.Tab;
+import gui.TabDole;
 import gui.table.TableModel;
 import model.DBNode;
 import model.DBNodeComposite;
 import model.categories.Table;
 import model.tree.TreeModel;
+import observer.Observable;
+import observer.Observer;
 
 public class Tree extends JTree{
-	
+
+
+
 	public Tree() {
 		setCellRenderer(new TreeCellRenderer());
 		addTreeSelectionListener(new TreeSelection());
@@ -55,7 +62,7 @@ public class Tree extends JTree{
 				if(e.getClickCount() == 2) {
 					if(selektovan instanceof Table) {
 						Table t = (Table) selektovan;
-						Tab.getInstance().dodajTab(selektovan);
+						Tab.getInstance().dodajTab(selektovan, t ,null, null, 0);
 						boolean ima = false;
 						if(Tab.getInstance().getTabele().isEmpty()) {
 							Tab.getInstance().getTabele().add(t);
@@ -70,8 +77,8 @@ public class Tree extends JTree{
 								Tab.getInstance().getTabele().add(t);
 							}
 						}
-						MainView.getinstance().notify(t, null, null, 0);
-						
+
+
 					}
 				}
 				
@@ -84,4 +91,6 @@ public class Tree extends JTree{
 		((TreeModel)getModel()).addNode(t);
 		SwingUtilities.updateComponentTreeUI(this);
 	}
+
+
 }

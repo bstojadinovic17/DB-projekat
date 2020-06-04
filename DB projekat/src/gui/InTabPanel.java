@@ -5,6 +5,8 @@ import model.categories.Attribute;
 import model.categories.AttributeConstraints;
 import model.categories.Table;
 import model.enums.ConstraintType;
+import observer.Observable;
+import observer.Observer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,14 +24,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class InTabPanel extends JPanel{
+public class InTabPanel extends JPanel implements Observable {
 	
 	private JTable tabela;
 	private JToolBar toolbar;
+	private List<Observer> observerList = new ArrayList<>();
+
 	public InTabPanel(JTable table) {
+		addObserver(TabDole.getInstance());
 		// TODO Auto-generated constructor stub
 		this.tabela = table;
-
+		InTabPanel panelaaaa = this;
 
 		tabela.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent event) {
@@ -57,7 +62,7 @@ public class InTabPanel extends JPanel{
 					}
 				}
 
-				MainView.getinstance().notify(myTable.toString(), columnNames, values, 1);
+				panelaaaa.notify(myTable.toString(), columnNames, values, 1);
 			}
 		});
 
@@ -126,4 +131,17 @@ public class InTabPanel extends JPanel{
 	}
 
 
+	@Override
+	public void addObserver(Observer o) {
+		if( o != null && !observerList.contains(o)){
+			observerList.add(o);
+		}
+	}
+
+	@Override
+	public void notify(Object o, List<String> columnNames, List<String> values, int where) {
+		for(Observer obs : observerList){
+			obs.update(o, columnNames, values, where);
+		}
+	}
 }

@@ -47,7 +47,7 @@ public class TabDole extends JTabbedPane implements Observer {
         if(where == 1){
             System.out.println(o.toString() + " " + where);
             for (int i = 0; i<columnNames.size(); i++){
-                //System.out.println(columnNames.get(i) + " " + values.get(i));
+                System.out.println(columnNames.get(i) + " " + values.get(i));
 
             }
         }else{

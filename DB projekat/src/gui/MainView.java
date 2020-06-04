@@ -19,7 +19,7 @@ import observer.Observable;
 import observer.Observer;
 
 
-public class MainView extends JFrame implements Observable {
+public class MainView extends JFrame  {
 	
 	private static MainView instance=null;
 	
@@ -42,7 +42,7 @@ public class MainView extends JFrame implements Observable {
 	
 	
 	private void initialize() {
-		addObserver(TabDole.getInstance());
+
 		actionManager = new ActionManager();
 		initializeTree();
 		initializeGUI();
@@ -114,17 +114,5 @@ public class MainView extends JFrame implements Observable {
 		return actionManager;
 	}
 
-	@Override
-	public void addObserver(Observer o) {
-		if( o != null && !observerList.contains(o)){
-			observerList.add(o);
-		}
-	}
 
-	@Override
-	public void notify(Object o, List<String> columnNames, List<String> values, int where) {
-		for(Observer obs : observerList){
-			obs.update(o, columnNames, values, where);
-		}
-	}
 }

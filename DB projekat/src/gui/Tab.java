@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,23 +12,28 @@ import javax.swing.JTable;
 
 import gui.table.TableModel;
 import model.categories.Table;
+import observer.Observable;
+import observer.Observer;
 
-public class Tab extends JTabbedPane{
+public class Tab extends JTabbedPane implements Observable {
 	
 	private static Tab instance = null;
 	private JTabbedPane tabbedPane;
 	private static ArrayList<Table> tabele;
 	private JButton closeButton;
+
+	private List<Observer> observerList = new ArrayList<>();
+
 	private Tab() {
 		// TODO Auto-generated constructor stub
-		
+		addObserver(TabDole.getInstance());
 		tabele = new ArrayList<>();
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setSize(new Dimension(700,350));
 		tabbedPane.setVisible(true);
 	}
 	
-	public void dodajTab(Object arg) {
+	public void dodajTab(Object arg, Object o, List<String> columnNames, List<String> values, int where) {
 		if(arg instanceof Table) {
 			Table t = (Table) arg;
 			
@@ -36,6 +42,7 @@ public class Tab extends JTabbedPane{
 				if(tabbedPane.getTitleAt(i).equals(t.getName())) {
 					tabbedPane.setSelectedIndex(i);
 					ima = true;
+					notify(o, null, null, where);
 					break;
 				}
 				
@@ -52,6 +59,7 @@ public class Tab extends JTabbedPane{
 				tabbedPane.addTab(t.getName(), panel);
 				tabbedPane.setFocusable(true);
 				tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+				notify(o, null, null, 0);
 			}
 		}
 	}
@@ -67,5 +75,19 @@ public class Tab extends JTabbedPane{
 	
 	public static ArrayList<Table> getTabele() {
 		return tabele;
+	}
+
+	@Override
+	public void addObserver(Observer o) {
+		if( o != null && !observerList.contains(o)){
+			observerList.add(o);
+		}
+	}
+
+	@Override
+	public void notify(Object o, List<String> columnNames, List<String> values, int where) {
+		for(Observer obs : observerList){
+			obs.update(o, columnNames, values, where);
+		}
 	}
 }
