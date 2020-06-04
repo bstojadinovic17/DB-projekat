@@ -75,7 +75,8 @@ public class TabDole extends JTabbedPane implements Observer {
                 TableModel model = new TableModel();
                 model.setRows(MainView.getinstance().getAppCore().getDatabase().readDataFromTable(s));
                 tabela.setModel(model);
-                tabela.setRowSelectionAllowed(true);
+                tabela.setCellSelectionEnabled(true);
+                tabela.setRowSelectionAllowed(false);
                 InTabPanel panel = new InTabPanel(tabela);
                 tabbedPane.addTab(s, panel);
                 tabbedPane.setFocusable(true);

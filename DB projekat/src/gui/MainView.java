@@ -66,6 +66,7 @@ public class MainView extends JFrame  {
 		JPanel desno = new JPanel(new BorderLayout());
         Tab tabovi = Tab.getInstance();
         TabDole tabovi2 = TabDole.getInstance();
+
 		JPanel panelTab = new JPanel(new BorderLayout());
         panelTab.setPreferredSize(new Dimension(700, 350));
         panelTab.add(tabovi.getTabbedPane(), BorderLayout.CENTER);

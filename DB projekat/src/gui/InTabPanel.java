@@ -38,9 +38,11 @@ public class InTabPanel extends JPanel implements Observable {
 
 		tabela.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent event) {
+
 				// do some actions here, for example
 				// print first column value from selected row
 				int indexTaba = Tab.getInstance().getTabbedPane().getSelectedIndex();
+				boolean pomBool = false;
 				Table myTable = Tab.getInstance().getTabele().get(indexTaba);
 				ArrayList<DBNode> atributi = (ArrayList<DBNode>) myTable.getChildren();
 				List<String> columnNames = new ArrayList<>();
@@ -62,8 +64,21 @@ public class InTabPanel extends JPanel implements Observable {
 					if(columnNames.contains(tabela.getColumnName(i))) {
 						columnIndex = i;
 						pom.add(tabela.getColumnName(i));
-						hashMap.put(tabela.getColumnName(i), (String) tabela.getModel().getValueAt(tabela.getSelectedRow(), columnIndex));
+						try{
+							hashMap.put(tabela.getColumnName(i), (String) tabela.getModel().getValueAt(tabela.getSelectedRow(), columnIndex));
+						}catch (Exception e){
+							pomBool = true;
+							TabDole.getInstance().getTabbedPane().removeAll();
+							//System.out.println((String)tabela.getModel().getValueAt(tabela.getSelectedRow(), columnIndex));
+							//return;
+						}
+
+
 					}
+				}
+
+				if(pomBool){
+					return;
 				}
 
 				if(pom.contains("manager_id") && pom.contains( "employee_id")){

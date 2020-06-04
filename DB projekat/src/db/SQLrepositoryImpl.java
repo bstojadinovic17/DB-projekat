@@ -210,7 +210,7 @@ public class SQLrepositoryImpl implements Repository{
 			String tableType[] = {"TABLE"};
 			ResultSet tables = metaData.getTables(connection.getCatalog(), null, null, tableType);
 			System.out.println(tables);
-			/*while(tables.next()) {
+			while(tables.next()) {
 				String tableName = tables.getString("TABLE_NAME");
 				ResultSet FK = metaData.getImportedKeys(connection.getCatalog(), null, tableName);
 				while(FK.next()) {
@@ -225,7 +225,7 @@ public class SQLrepositoryImpl implements Repository{
 					}
 				}
 				
-			} */
+			}
 			
 			while(tables.next()) {
 				String tableName = tables.getString("TABLE_NAME");
@@ -244,7 +244,8 @@ public class SQLrepositoryImpl implements Repository{
 			System.out.println("obrisan red");*/
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
+			//e.printStackTrace();
+																																																				System.out.println("Uspesno brisanje");
 		} finally {
 			this.closeConnection();
 		}
@@ -436,8 +437,11 @@ public class SQLrepositoryImpl implements Repository{
 			String value = "";
 
 			boolean exist = false;
-			boolean intValueBool = true;
+			boolean intValueBool = false;
 			int valueInt  = 0;
+
+			double doubleValue = 0.0;
+			boolean isDouble = false;
 
 
 			int j = 0;
@@ -448,6 +452,16 @@ public class SQLrepositoryImpl implements Repository{
 
 						try {
 							valueInt = Integer.parseInt(valuePom);
+							intValueBool = true;
+						}
+						catch (NumberFormatException e)
+						{
+							intValueBool = false;
+						}
+
+						try {
+							doubleValue = Double.parseDouble(valuePom);
+							isDouble  = true;
 						}
 						catch (NumberFormatException e)
 						{
@@ -456,6 +470,8 @@ public class SQLrepositoryImpl implements Repository{
 
 						if(intValueBool){
 							pom += fk.getString("PKTABLE_NAME") + " WHERE " + fk.getString("PKCOLUMN_NAME") + " = " + valuePom;
+						} else if(isDouble){
+							pom += fk.getString("PKTABLE_NAME") + " WHERE " + fk.getString("PKCOLUMN_NAME") + " = " + doubleValue ;
 						}else{
 							pom += fk.getString("PKTABLE_NAME") + " WHERE " + fk.getString("PKCOLUMN_NAME") + " = '" + valuePom + "'";
 						}
@@ -511,6 +527,10 @@ public class SQLrepositoryImpl implements Repository{
 					query += tableName +" WHERE"+ columnIdName + "= " + value;
 				}else{
 					query += tableName +" WHERE"+ columnIdName + "= '" + value + "'";
+				}
+
+				if(isDouble){
+					pom += fk.getString("PKTABLE_NAME") + " WHERE " + fk.getString("PKCOLUMN_NAME") + " = " + doubleValue;
 				}
 
 				System.out.println(query);
