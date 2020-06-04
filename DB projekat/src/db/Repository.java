@@ -1,5 +1,6 @@
 package db;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -17,8 +18,6 @@ public interface Repository {
 	void delete(String from, String column, String value);
 	
 	void add(Table toTableName);
-
-	void update(Table tabela, String pk, List<String> rowData);
 	
 	List<Row> filter(String from, List<String> data);
 
@@ -29,5 +28,7 @@ public interface Repository {
 	List<Row> average(String from, String averageColumn, List<String> data);
 
 	List<String> getTableModelFromRow(String tableName);
+
+	void update(Table tabela, String pk, HashMap<String, String> rowData);
 	
 }

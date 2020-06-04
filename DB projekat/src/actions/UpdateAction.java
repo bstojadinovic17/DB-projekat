@@ -2,12 +2,14 @@ package actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import gui.InTabPanel;
+import gui.MainView;
 import gui.Tab;
 import gui.table.TableModel;
 import model.DBNode;
@@ -34,8 +36,10 @@ public class UpdateAction extends AbstractAction{
 			
 			Table tabela = Tab.getInstance().getTabele().get(indexTaba);
 			List<String> rowData = new ArrayList<String>();
+			List<String> headeri = new ArrayList<String>();
 			for(int i=0;i<panel.getTabela().getColumnCount();i++) {
 				String value = (String) panel.getTabela().getModel().getValueAt(selektovanRed, i);
+				headeri.add(panel.getTabela().getColumnName(i));
 				rowData.add(value);
 			}
 			ArrayList<DBNode> atributi = (ArrayList<DBNode>) tabela.getChildren();
@@ -56,8 +60,16 @@ public class UpdateAction extends AbstractAction{
 					columnIndex = i;
 				}
 			}
-			pkValue = (String) panel.getTabela().getModel().getValueAt(selektovanRed, columnIndex);
-			System.out.println(pkValue);
+			pkValue=pkColumnName+":";
+			pkValue += (String) panel.getTabela().getModel().getValueAt(selektovanRed, columnIndex);
+			HashMap<String, String> data = new HashMap<String, String>();
+			for(int i=0;i<headeri.size();i++) {
+				data.put(headeri.get(i), rowData.get(i));
+			}
+			
+			//System.out.println(pkValue);
+			
+			MainView.getinstance().getAppCore().getDatabase().updateData(tabela, pkValue, data);
 		}
 		
 	}

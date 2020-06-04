@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import gui.InTabPanel;
@@ -30,7 +31,7 @@ public class DeleteAction extends AbstractAction{
 		
 		int selektovanRed = panel.getTabela().getSelectedRow();
 		if(selektovanRed == -1) {
-			System.out.println("Niste selektovali red za brisanje!");
+			JOptionPane.showMessageDialog(null, "Niste selektovali red za brisanje!");
 		}else {
 			
 			DefaultTableModel model = (DefaultTableModel) panel.getTabela().getModel();

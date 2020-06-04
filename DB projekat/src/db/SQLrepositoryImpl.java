@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import javax.swing.JPanel;
 
 import db.settings.Settings;
 import gui.Tab;
+import lombok.val;
 import model.DBNode;
 import model.DBNodeComposite;
 import model.categories.Attribute;
@@ -333,37 +335,7 @@ public class SQLrepositoryImpl implements Repository{
 		}
 	}
 	
-	@Override
-	public void update(Table tabela, String pk ,List<String> rowData) {
-		// TODO Auto-generated method stub
-		try {
-			this.connect();
-			ArrayList<DBNode> atributi = (ArrayList<DBNode>) tabela.getChildren();
-			int cnt = 0;
-			String query = "UPDATE "+tabela.getName()+" SET ";
-			for(DBNode a:atributi) {
-				Attribute atribut = (Attribute) a;
-				AttributeType type = atribut.getAttributeType();
-				int lenght = atribut.getLenght();
-				
-				String poruka = atribut.getName()+":";
-				String currentData = rowData.get(cnt);
-				Object value = null;
-				if(type.toString().contains("CHAR") || type.toString().contains("TEXT")) {
-					value = JOptionPane.showInputDialog(poruka, currentData);
-					if(value == null) {
-						return;
-					}
-				}
-			}
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-			
-		} finally {
-			this.closeConnection();
-		}
-	}
+	
 	
 	@Override
 	public List<Row> filter(String from, List<String> data) {
@@ -545,6 +517,110 @@ public class SQLrepositoryImpl implements Repository{
 		}
 			return null;
 	}
+
+	
+
+	@Override
+	public void update(Table tabela, String pk, HashMap<String, String> rowData) {
+		// TODO Auto-generated method stub
+		try {
+			this.connect();
+			ArrayList<DBNode> atributi = (ArrayList<DBNode>) tabela.getChildren();
+			ArrayList<Object> values = new ArrayList<>();
+			Set<String> headeri = rowData.keySet();
+			String primaryKey = null;
+			String query = "UPDATE "+tabela.getName()+" SET ";
+			for(DBNode a:atributi) {
+				Attribute atribut = (Attribute) a;
+				String attributeName = atribut.getName();
+				AttributeType type = atribut.getAttributeType();
+				int lenght = atribut.getLenght();
+				
+				String poruka = null;
+				String currentData = null;
+				Object value = null;
+				for(int i=0;i<headeri.size();i++) {
+					if(headeri.contains(attributeName)) {
+						poruka = attributeName+":";
+						currentData = rowData.get(attributeName.toString());
+					}
+				}
+				if(type.toString().contains("CHAR") || type.toString().contains("TEXT")) {
+					value = JOptionPane.showInputDialog(poruka, currentData);
+					if(value == null) {
+						return;
+					}
+					while(value.toString().length() > lenght) {
+						JOptionPane.showMessageDialog(null, "Ne moze duze od "+lenght+" karaktera!");
+						value = JOptionPane.showInputDialog(poruka);
+						if(value == null) {
+							return;
+						}
+					}
+				} else if(type.toString().contains("INT") || type.toString().contains("NUMERIC")) {
+					value = Integer.parseInt(JOptionPane.showInputDialog(poruka, currentData));
+					if(value == null) {
+						return;
+					}
+				} else if(type.toString().contains("FLOAT") || type.toString().contains("DECIMAL")) {
+					value = Float.parseFloat(JOptionPane.showInputDialog(poruka, currentData));
+					if(value == null) {
+						return;
+					}
+				} else {
+					value = JOptionPane.showInputDialog(poruka, currentData);
+				}
+				
+				while(value.equals("")) {
+					if(atribut.getChildByName("NOT NULL") !=null) {
+						JOptionPane.showMessageDialog(null, "Ne mozete ostaviti prazno!");
+						value = JOptionPane.showInputDialog(poruka, currentData);
+					}else {
+						value="";
+						break;
+					}
+				}
+				if(!(value.equals(currentData))) {
+					values.add(poruka+value);
+				}
+
+			}
+			for(int i=0;i<values.size()-1;i++) {
+				String[] split = values.get(i).toString().split(":");
+				query+= split[0]+" = '"+split[1]+"' , ";
+			}
+			String split[] = values.get(values.size()-1).toString().split(":");
+			String pkSplit[] = pk.split(":");
+			String pkColumnName = pkSplit[0];
+			String pkValue = pkSplit[1];
+			query+=split[0]+" = '"+split[1]+"' WHERE "+pkColumnName+" = '" +pkValue+"'";
+			System.out.println(query);
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			if(e.toString().contains("duplicate key")) {
+				JOptionPane.showMessageDialog(null, "Primarni kljuc vec postoji u tabeli!");
+				return;
+			} else if(e.toString().contains("conflicted with the FOREIGN KEY")) {
+				JOptionPane.showMessageDialog(null, "Uneli ste vrednost za foreign key koja ne postoji u toj tabeli!");
+				return;
+			} else {
+				e.printStackTrace();
+			}
+		} finally {
+			this.closeConnection();
+		}
+		
+	}
+
+	
+
+	
+
+	
+
+	
 
 	
 

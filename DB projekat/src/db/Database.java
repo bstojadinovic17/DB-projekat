@@ -1,5 +1,6 @@
 package db;
 
+import java.util.HashMap;
 import java.util.List;
 import model.DBNode;
 import model.categories.Table;
@@ -15,7 +16,7 @@ public interface Database {
 	
 	void addData(Table tabela);
 	
-	void updateData(Table tabela, String pk ,List<String> rowData);
+	void updateData(Table tabela, String pk ,HashMap<String, String> rowData);
 	
 	List<Row> filterData(String from, List<String> data);
 	

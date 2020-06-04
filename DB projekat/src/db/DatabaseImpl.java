@@ -1,5 +1,6 @@
 package db;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -70,7 +71,7 @@ public class DatabaseImpl implements Database{
 	}
 
 	@Override
-	public void updateData(Table tabela, String pk, List<String> rowData) {
+	public void updateData(Table tabela, String pk, HashMap<String, String> rowData) {
 		// TODO Auto-generated method stub
 		repository.update(tabela, pk, rowData);
 	}
