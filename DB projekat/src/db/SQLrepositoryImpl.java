@@ -39,6 +39,7 @@ import model.categories.Table;
 import model.data.Row;
 import model.enums.AttributeType;
 import model.enums.ConstraintType;
+import utils.RowWithTableName;
 
 public class SQLrepositoryImpl implements Repository{
 	
@@ -422,9 +423,125 @@ public class SQLrepositoryImpl implements Repository{
 		return rows;
 	}
 
-	/*public List<Row> getTableModelFromTableName(String from, String column, String value){
+	public RowWithTableName getTableModelFromTableName(String main, HashMap<String, String> columnValue, int iterate){
+		List<Row> rows = new ArrayList<>();
+		RowWithTableName toReturn = new RowWithTableName();
+		try{
+			this.connect();
+			String query = "SELECT * FROM ";
+			DatabaseMetaData dmd = connection.getMetaData();
+			ResultSet fk = dmd.getImportedKeys(connection.getCatalog(), null, main);
+			String pom = "";
+			String tableName = "";
+			String value = "";
 
-	}*/
+			boolean exist = false;
+			boolean intValueBool = true;
+			int valueInt  = 0;
+
+
+			int j = 0;
+			while(fk.next()){
+				if(j == iterate){
+					if(columnValue.get(fk.getString("PKCOLUMN_NAME")) != null){
+						String valuePom = columnValue.get(fk.getString("PKCOLUMN_NAME"));
+
+						try {
+							valueInt = Integer.parseInt(valuePom);
+						}
+						catch (NumberFormatException e)
+						{
+							intValueBool = false;
+						}
+
+						if(intValueBool){
+							pom += fk.getString("PKTABLE_NAME") + " WHERE " + fk.getString("PKCOLUMN_NAME") + " = " + valuePom;
+						}else{
+							pom += fk.getString("PKTABLE_NAME") + " WHERE " + fk.getString("PKCOLUMN_NAME") + " = '" + valuePom + "'";
+						}
+						toReturn.setTableName(fk.getString("PKTABLE_NAME"));
+
+						exist = true;
+					}else {
+
+						tableName = fk.getString("PKTABLE_NAME");
+						toReturn.setTableName(tableName);
+
+						value = columnValue.get("manager_id");
+
+					}
+				}
+				j++;
+			}
+			if(exist){
+				query += pom;
+				System.out.println(query);
+				if(value != null){
+					PreparedStatement preparedStatement = connection.prepareStatement(query);
+					ResultSet rs = preparedStatement.executeQuery();
+					while(rs.next()) {
+						Row row = new Row();
+						row.setName(tableName);
+						ResultSetMetaData rsmd = rs.getMetaData();
+						for(int i=1;i<=rsmd.getColumnCount();i++) {
+							row.addField(rsmd.getColumnName(i), rs.getString(i));
+						}
+						rows.add(row);
+					}
+					toReturn.setRows(rows);
+					return toReturn;
+				}
+			}else{
+
+				String tableType[] = {"TABLE"};
+				ResultSet tables = dmd.getTables(connection.getCatalog(), null, null, tableType);
+				//System.out.println(tables);
+				String columnIdName = " ";
+				while(tables.next()) {
+					if(tableName.equals(tables.getString("TABLE_NAME"))){
+						ResultSet PK = dmd.getPrimaryKeys(connection.getCatalog(), null, tableName);
+						String kolona = "";
+						while(PK.next()) {
+							kolona = PK.getString("COLUMN_NAME");
+							columnIdName += kolona +  " ";
+						}
+					}
+				}
+				if(intValueBool){
+					query += tableName +" WHERE"+ columnIdName + "= " + value;
+				}else{
+					query += tableName +" WHERE"+ columnIdName + "= '" + value + "'";
+				}
+
+				System.out.println(query);
+				if(value != null){
+
+					PreparedStatement preparedStatement = connection.prepareStatement(query);
+					ResultSet rs = preparedStatement.executeQuery();
+					while(rs.next()) {
+						Row row = new Row();
+						row.setName(tableName);
+						ResultSetMetaData rsmd = rs.getMetaData();
+						for(int i=1;i<=rsmd.getColumnCount();i++) {
+							row.addField(rsmd.getColumnName(i), rs.getString(i));
+						}
+						rows.add(row);
+					}
+
+					toReturn.setRows(rows);
+					return toReturn;
+				}
+			}
+
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			this.closeConnection();
+		}
+		toReturn.setRows(null);
+		return toReturn;
+	}
 
 	public List<String> getTableModelFromRow(String tableName){
 		try {
@@ -446,7 +563,7 @@ public class SQLrepositoryImpl implements Repository{
 					}
 					//System.out.println("---------------");
 				}
-				}
+			}
 
 				return toReturn;
 		} catch (Exception e) {

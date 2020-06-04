@@ -9,6 +9,7 @@ import model.categories.Attribute;
 import model.categories.Table;
 import model.data.Row;
 import observer.Observer;
+import utils.RowWithTableName;
 
 public class DatabaseImpl implements Database{
 	
@@ -78,6 +79,9 @@ public class DatabaseImpl implements Database{
 		return repository.filterIsort(from,data);
 	}
 
-
+	@Override
+	public RowWithTableName getTableModelFromTableName(String main, HashMap<String,String> map, int iterate){
+		return repository.getTableModelFromTableName(main, map, iterate);
+	}
 
 }

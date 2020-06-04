@@ -42,7 +42,7 @@ public class Tab extends JTabbedPane implements Observable {
 				if(tabbedPane.getTitleAt(i).equals(t.getName())) {
 					tabbedPane.setSelectedIndex(i);
 					ima = true;
-					notify(o, null, null, where);
+					notify(o, null, where);
 					break;
 				}
 				
@@ -59,7 +59,7 @@ public class Tab extends JTabbedPane implements Observable {
 				tabbedPane.addTab(t.getName(), panel);
 				tabbedPane.setFocusable(true);
 				tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
-				notify(o, null, null, 0);
+				notify(o, null, 0);
 			}
 		}
 	}
@@ -85,9 +85,9 @@ public class Tab extends JTabbedPane implements Observable {
 	}
 
 	@Override
-	public void notify(Object o, List<String> columnNames, List<String> values, int where) {
+	public void notify(Object o,  Object columnValues, int where) {
 		for(Observer obs : observerList){
-			obs.update(o, columnNames, values, where);
+			obs.update(o, columnValues, where);
 		}
 	}
 }

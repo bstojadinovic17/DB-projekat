@@ -44,13 +44,16 @@ public class InTabPanel extends JPanel implements Observable {
 				Table myTable = Tab.getInstance().getTabele().get(indexTaba);
 				ArrayList<DBNode> atributi = (ArrayList<DBNode>) myTable.getChildren();
 				List<String> columnNames = new ArrayList<>();
-				List<String> values = new ArrayList<>();
+				List<String> pom = new ArrayList<>();
+				HashMap<String, String> hashMap = new HashMap<>();
+
 				for(DBNode node:atributi) {
 					Attribute a = (Attribute) node;
 					for(DBNode ogr:a.getChildren()) {
 						AttributeConstraints ogranicenje = (AttributeConstraints) ogr;
 						if(ogranicenje.getConstraintType().equals(ConstraintType.FOREIGN_KEY)) {
 							columnNames.add(ogranicenje.getParent().toString());
+
 						}
 					}
 				}
@@ -58,11 +61,21 @@ public class InTabPanel extends JPanel implements Observable {
 				for(int i=0;i<tabela.getModel().getColumnCount();i++) {
 					if(columnNames.contains(tabela.getColumnName(i))) {
 						columnIndex = i;
-						values.add((String) tabela.getModel().getValueAt(tabela.getSelectedRow(), columnIndex));
+						pom.add(tabela.getColumnName(i));
+						hashMap.put(tabela.getColumnName(i), (String) tabela.getModel().getValueAt(tabela.getSelectedRow(), columnIndex));
 					}
 				}
 
-				panelaaaa.notify(myTable.toString(), columnNames, values, 1);
+				if(pom.contains("manager_id") && pom.contains( "employee_id")){
+					hashMap.replace("employee_id" , hashMap.get("manager_id"));
+					hashMap.remove("manager_id");
+				}
+
+				System.out.println(hashMap);
+
+
+
+				panelaaaa.notify(myTable.toString(), hashMap, 1);
 			}
 		});
 
@@ -139,9 +152,9 @@ public class InTabPanel extends JPanel implements Observable {
 	}
 
 	@Override
-	public void notify(Object o, List<String> columnNames, List<String> values, int where) {
+	public void notify(Object o, Object hashMap,  int where) {
 		for(Observer obs : observerList){
-			obs.update(o, columnNames, values, where);
+			obs.update(o, hashMap, where);
 		}
 	}
 }

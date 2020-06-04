@@ -8,6 +8,7 @@ import model.DBNode;
 import model.categories.Attribute;
 import model.categories.Table;
 import model.data.Row;
+import utils.RowWithTableName;
 
 public interface Repository {
 	
@@ -29,5 +30,7 @@ public interface Repository {
 	void update(Table tabela, String pk, HashMap<String, String> rowData);
 
 	List<Row> filterIsort(String from, HashMap<String, String> data);
+
+	public RowWithTableName getTableModelFromTableName(String main, HashMap<String,String> map, int iterate);
 	
 }

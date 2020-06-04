@@ -18,7 +18,7 @@ public class TableModel extends DefaultTableModel{
 		
 		Vector columnVector = DefaultTableModel.convertToVector(rows.get(1).getFields().keySet().toArray());
         Vector dataVector = new Vector(columnCount);
-        
+
         for (int i=0; i<rows.size(); i++){
             dataVector.add(DefaultTableModel.convertToVector(rows.get(i).getFields().values().toArray()));
         }
@@ -26,6 +26,9 @@ public class TableModel extends DefaultTableModel{
     }
 
     public void setRows(List<Row> list) {
+	    if(list.size() == 1){
+	        list.add(list.get(0));
+        }
         this.rows = list;
         updateModel();
     }

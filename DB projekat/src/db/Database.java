@@ -5,6 +5,7 @@ import java.util.List;
 import model.DBNode;
 import model.categories.Table;
 import model.data.Row;
+import utils.RowWithTableName;
 
 public interface Database {
 	
@@ -25,4 +26,6 @@ public interface Database {
 	List<Row> averageData(String from, String averageColumn, List<String> data);
 
 	public List<String> getTableModelFromRow(String tableName);
+
+	public RowWithTableName getTableModelFromTableName(String main, HashMap<String,String> map, int iterate);
 }
