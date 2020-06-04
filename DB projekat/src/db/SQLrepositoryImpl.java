@@ -337,67 +337,7 @@ public class SQLrepositoryImpl implements Repository{
 	
 	
 	
-	@Override
-	public List<Row> filter(String from, List<String> data) {
-		List<Row> rows = new ArrayList<>();
-		try {
-			this.connect();
-			String query = "SELECT ";
-			for(String s:data) {
-				if(data.indexOf(s)== data.size()-1) {
-					query+=s;
-				}else {
-					query+=s+" , ";
-				}
-			}
-			query+=" FROM "+from;
-			System.out.println(query);
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			ResultSet rs = preparedStatement.executeQuery();
-			while(rs.next()) {
-				Row row = new Row();
-				row.setName(from);
-				ResultSetMetaData rsmd = rs.getMetaData();
-				for(int i=1;i<=rsmd.getColumnCount();i++) {
-					row.addField(rsmd.getColumnName(i), rs.getString(i));
-				}
-				rows.add(row);
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			this.closeConnection();
-		}
-		return rows;
-	}
-
-	@Override
-	public List<Row> sort(String from, String column, String order) {
-		// TODO Auto-generated method stub
-		List<Row> rows = new ArrayList<>();
-		try {
-			this.connect();
-			String query = "SELECT * FROM "+from+ " ORDER BY "+ column+ " "+ order;
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			ResultSet rs = preparedStatement.executeQuery();
-			while(rs.next()) {
-				Row row = new Row();
-				row.setName(from);
-				ResultSetMetaData rsmd = rs.getMetaData();
-				for(int i=1;i<=rsmd.getColumnCount();i++) {
-					row.addField(rsmd.getColumnName(i), rs.getString(i));
-				}
-				rows.add(row);
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			this.closeConnection();
-		}
-		return rows;
-	}
+	
 
 	@Override
 	public List<Row> count(String from, String countColumn, List<String> data) {
@@ -612,6 +552,57 @@ public class SQLrepositoryImpl implements Repository{
 			this.closeConnection();
 		}
 		
+	}
+
+	@Override
+	public List<Row> filterIsort(String from, HashMap<String, String> data) {
+		// TODO Auto-generated method stub
+		List<Row> rows = new ArrayList<Row>();
+		List<String> columns = new ArrayList<String>();
+		Set<String> kolone = data.keySet();
+		try {
+			this.connect();
+			String query = "SELECT ";
+			int cnt = data.size();
+			Iterator<String> it = kolone.iterator();
+			while(it.hasNext()) {
+				columns.add(it.next());			
+			}
+			if(columns.size()>1) {
+				for(int i=0;i<columns.size()-1;i++) {
+					query+=columns.get(i)+" , ";
+				}
+				query+=columns.get(columns.size()-1);
+			}else {
+				query+=columns.get(columns.size()-1);
+			}
+			query+=" FROM "+from+" ORDER BY ";
+			for(String s:columns) {
+				if(columns.indexOf(s) == columns.size()-1) {
+					query+=s+" "+data.get(s).toString();
+				}else {
+					query+=s+" "+data.get(s).toString()+" , ";
+				}
+			}
+			System.out.println(query);
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()) {
+				Row row = new Row();
+				row.setName(from);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for(int i=1;i<=rsmd.getColumnCount();i++) {
+					row.addField(rsmd.getColumnName(i), rs.getString(i));
+				}
+				rows.add(row);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return rows;
 	}
 
 	

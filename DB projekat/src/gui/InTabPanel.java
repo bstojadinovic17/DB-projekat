@@ -86,13 +86,8 @@ public class InTabPanel extends JPanel{
 		toolbar.add(btnUpdate);
 		toolbar.addSeparator();
 		
-		JButton btnFilter = new JButton("Filter");
-		btnFilter.setSize(new Dimension(50,25));
-		btnFilter.addActionListener(MainView.getinstance().getActionManager().getFilterAction());
-		toolbar.add(btnFilter);
-		toolbar.addSeparator();
 		
-		JButton btnSort = new JButton("Sort");
+		JButton btnSort = new JButton("Filter & Sort");
 		btnSort.setSize(new Dimension(50,25));
 		btnSort.addActionListener(MainView.getinstance().getActionManager().getSortAction());
 		toolbar.add(btnSort);

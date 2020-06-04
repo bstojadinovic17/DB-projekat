@@ -5,7 +5,6 @@ public class ActionManager {
 	private AddAction addAction;
 	private DeleteAction deleteAction;
 	private UpdateAction updateAction;
-	private FilterAction filterAction;
 	private SortAction sortAction;
 	private CountAction countAction;
 	private AverageAction averageAction;
@@ -19,7 +18,6 @@ public class ActionManager {
 		addAction = new AddAction();
 		deleteAction = new DeleteAction();
 		updateAction = new UpdateAction();
-		filterAction = new FilterAction();
 		sortAction = new SortAction();
 		countAction = new CountAction();
 		averageAction = new AverageAction();
@@ -37,9 +35,6 @@ public class ActionManager {
 	}
 	public UpdateAction getUpdateAction() {
 		return updateAction;
-	}
-	public FilterAction getFilterAction() {
-		return filterAction;
 	}
 	public SortAction getSortAction() {
 		return sortAction;

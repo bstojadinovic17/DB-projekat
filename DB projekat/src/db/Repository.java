@@ -19,9 +19,6 @@ public interface Repository {
 	
 	void add(Table toTableName);
 	
-	List<Row> filter(String from, List<String> data);
-
-	List<Row> sort(String from, String column, String order);
 
 	List<Row> count(String from, String countColumn, List<String> data);
 
@@ -30,5 +27,7 @@ public interface Repository {
 	List<String> getTableModelFromRow(String tableName);
 
 	void update(Table tabela, String pk, HashMap<String, String> rowData);
+
+	List<Row> filterIsort(String from, HashMap<String, String> data);
 	
 }

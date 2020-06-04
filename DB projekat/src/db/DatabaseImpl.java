@@ -46,17 +46,7 @@ public class DatabaseImpl implements Database{
 	}
 	
 	
-	@Override
-	public List<Row> filterData(String from, List<String> data) {
-		// TODO Auto-generated method stub
-		return repository.filter(from, data);
-	}
-
-	@Override
-	public List<Row> sortData(String from, String column, String order) {
-		// TODO Auto-generated method stub
-		return repository.sort(from,column,order);
-	}
+	
 
 	@Override
 	public List<Row> countData(String from, String countColumn, List<String> data) {
@@ -79,5 +69,11 @@ public class DatabaseImpl implements Database{
 	@Override
 	public List<String> getTableModelFromRow(String tableName){
 		return repository.getTableModelFromRow(tableName);
+	}
+
+	@Override
+	public List<Row> filterIsortData(String from, HashMap<String, String> data) {
+		// TODO Auto-generated method stub
+		return repository.filterIsort(from,data);
 	}
 }

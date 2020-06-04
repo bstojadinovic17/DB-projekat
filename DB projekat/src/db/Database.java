@@ -18,9 +18,7 @@ public interface Database {
 	
 	void updateData(Table tabela, String pk ,HashMap<String, String> rowData);
 	
-	List<Row> filterData(String from, List<String> data);
-	
-	List<Row> sortData(String from, String column, String order);
+	List<Row> filterIsortData(String from, HashMap<String, String> data);
 	
 	List<Row> countData(String from, String countColumn, List<String> data);
 	
